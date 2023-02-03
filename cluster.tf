@@ -22,14 +22,13 @@ module "gke_application_cluster" {
   project_id = var.project_name
   name       = "${var.default_region}-application"
   # STABLE for production
-  release_channel              = "REGULAR"
-  location                     = var.default_region
-  network                      = module.gke_vpc.self_link
-  subnetwork                   = module.gke_vpc.subnet_self_links["${var.default_region}/gke"]
-  secondary_range_pods         = "pods"
-  secondary_range_services     = "services"
-  default_max_pods_per_node    = 100
-  authenticator_security_group = "gke-security-groups@dapperlabs.com"
+  release_channel           = "REGULAR"
+  location                  = var.default_region
+  network                   = module.gke_vpc.self_link
+  subnetwork                = module.gke_vpc.subnet_self_links["${var.default_region}/gke"]
+  secondary_range_pods      = "pods"
+  secondary_range_services  = "services"
+  default_max_pods_per_node = 100
 
   master_authorized_ranges = local.master_authorized_ranges
   private_cluster_config = {
