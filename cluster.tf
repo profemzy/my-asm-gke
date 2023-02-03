@@ -82,7 +82,23 @@ resource "google_compute_global_address" "ingress" {
 module "hub_mesh" {
   source = "./hub_mesh"
 
-  asm_gke_location = var.default_region
-  asm_gke_name     = "${var.default_region}-application"
+  asm_gke_location = module.gke_application_cluster.location
+  asm_gke_name     = module.gke_application_cluster.name
   project_name     = var.project_name
+}
+
+provider "kubernetes" {
+  host                   = "https://${module.gke_application_cluster.endpoint}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(module.gke_application_cluster.ca_certificate)
+}
+
+data "google_client_config" "default" {}
+
+module "asm" {
+  source           = "github.com/dapperlabs-platform/terraform-asm?ref=v0.1.3"
+  project_id       = var.project_name
+  cluster_name     = module.gke_application_cluster.name
+  cluster_location = module.gke_application_cluster.location
+  enable_cni       = true
 }
