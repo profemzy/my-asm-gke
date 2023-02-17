@@ -13,18 +13,9 @@ resource "google_gke_hub_membership" "asm_gke_membership" {
   provider = google-beta
 }
 
-resource "null_resource" "exec_asm_gke_mesh" {
-  provisioner "local-exec" {
-    interpreter = ["bash", "-exc"]
-    command     = "${path.module}/scripts/mesh.sh"
-    environment = {
-      CLUSTER  = data.google_container_cluster.asm_cluster.name
-      LOCATION = data.google_container_cluster.asm_cluster.location
-      PROJECT  = var.project_name
-    }
-  }
-  triggers = {
-    build_number = "${timestamp()}"
-    script_sha1  = sha1(file("${path.module}/scripts/mesh.sh")),
-  }
+resource "google_gke_hub_feature" "feature" {
+  provider = google-beta
+
+  name = "servicemesh"
+  location = "global"
 }

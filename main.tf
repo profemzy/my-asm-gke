@@ -10,8 +10,8 @@ terraform {
     }
   }
   backend "gcs" {
-    bucket = "femi-gke-workload-identity-bucket"
-    prefix = "asm"
+    bucket = "asm-tf-state"
+    prefix = "demo"
   }
 }
 

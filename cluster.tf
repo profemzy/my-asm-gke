@@ -79,6 +79,7 @@ resource "google_compute_global_address" "ingress" {
   address_type = "EXTERNAL"
 }
 
+# Register the cluster to a fleet and enable the mesh feature
 module "hub_mesh" {
   source = "./hub_mesh"
 
@@ -95,10 +96,13 @@ provider "kubernetes" {
 
 data "google_client_config" "default" {}
 
+# Provisions Anthos
 module "asm" {
   source           = "github.com/dapperlabs-platform/terraform-asm?ref=v0.1.3"
   project_id       = var.project_name
   cluster_name     = module.gke_application_cluster.name
   cluster_location = module.gke_application_cluster.location
   enable_cni       = true
+
+  depends_on = [module.hub_mesh]
 }
